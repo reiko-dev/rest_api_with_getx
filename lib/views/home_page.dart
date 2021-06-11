@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:rest_api_with_getx/controllers/product_controller.dart';
+import 'package:rest_api_with_getx/views/product_tile.dart';
 
 class HomePage extends StatelessWidget {
   final productController = Get.put(ProductController());
@@ -10,10 +11,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
         elevation: 0,
-        leading: Icon(
-          Icons.arrow_back_ios,
-        ),
+        leading: Icon(Icons.arrow_back_ios, color: Colors.black),
         actions: [
           IconButton(
             icon: Icon(
@@ -51,22 +51,23 @@ class HomePage extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Obx(
-              () => StaggeredGridView.countBuilder(
+            child: Obx(() {
+              if (productController.isLoading.value)
+                return Center(child: CircularProgressIndicator());
+
+              return StaggeredGridView.countBuilder(
                 crossAxisCount: 2,
                 itemCount: productController.productsList.length,
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
                 itemBuilder: (context, index) {
-                  return Container(
-                    width: 100,
-                    height: 200,
-                    color: Colors.red,
+                  return SizedBox(
+                    child: ProductTile(productController.productsList[index]),
                   );
                 },
                 staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-              ),
-            ),
+              );
+            }),
           ),
         ],
       ),

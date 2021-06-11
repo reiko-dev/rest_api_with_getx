@@ -5,7 +5,7 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 
-List<Product> productFromJson(String str) =>
+List<Product> productsFromJson(String str) =>
     List<Product>.from(json.decode(str).map((x) => Product.fromJson(x)));
 
 String productToJson(List<Product> data) =>
@@ -19,7 +19,7 @@ class Product {
     required this.price,
     this.priceSign,
     this.currency,
-    this.imageLink,
+    required this.imageLink,
     this.productLink,
     this.websiteLink,
     required this.description,
@@ -40,7 +40,7 @@ class Product {
   String price;
   dynamic priceSign;
   dynamic currency;
-  String? imageLink;
+  String imageLink;
   String? productLink;
   String? websiteLink;
   String description;
@@ -52,7 +52,7 @@ class Product {
   DateTime? updatedAt;
   String productApiUrl;
   String? apiFeaturedImage;
-  List<ProductColor> productColors;
+  List<ProductColor>? productColors;
 
   var isFavorite = false.obs;
 
@@ -98,8 +98,10 @@ class Product {
         "updated_at": updatedAt?.toIso8601String(),
         "product_api_url": productApiUrl,
         "api_featured_image": apiFeaturedImage,
-        "product_colors":
-            List<dynamic>.from(productColors.map((x) => x.toJson())),
+        "product_colors": productColors ??
+            List<dynamic>.from(
+              productColors!.map((x) => x.toJson()),
+            ),
       };
 }
 
@@ -110,11 +112,11 @@ final brandValues = EnumValues({"maybelline": Brand.MAYBELLINE});
 class ProductColor {
   ProductColor({
     required this.hexValue,
-    required this.colourName,
+    this.colourName,
   });
 
   String hexValue;
-  String colourName;
+  String? colourName;
 
   factory ProductColor.fromJson(Map<String, dynamic> json) => ProductColor(
         hexValue: json["hex_value"],
@@ -135,7 +137,7 @@ class EnumValues<T> {
 
   Map<T, String> get reverse {
     if (reverseMap == null) {
-      reverseMap = map.map((k, v) => new MapEntry(v, k));
+      reverseMap = map.map((k, v) => MapEntry(v, k));
     }
     return reverseMap!;
   }
